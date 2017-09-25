@@ -1,24 +1,32 @@
 #!/usr/bin/python
-import time
-from tempMail import TempMail
-from hashlib import md5
-from bs4 import BeautifulSoup as BS
-import requests
-import sys
-from multiprocessing.dummy import Pool as ThreadPool
-import ptcaccount2
-from captchaSolver import CaptchaSolver
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.select import Select
-from threading import Thread
-from os.path import join, dirname
-from dotenv import load_dotenv
 import os
+import sys
+import time
+from hashlib import md5
+from multiprocessing.dummy import Pool as ThreadPool
+from os.path import dirname, join
+from threading import Thread
+from pyvirtualdisplay import Display
+from logger import Logger
+import logging
+
+
+sys.path.append('ptcaccount2')
+import ptcaccount2
+import requests
+from bs4 import BeautifulSoup as BS
+from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        TimeoutException)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.ui import WebDriverWait
+
+from captchaSolver import CaptchaSolver
+from tempMail import TempMail
+
 
 class PtcAccMaker:
 
@@ -46,7 +54,8 @@ class PtcAccMaker:
         elem = driver.execute_script("arguments[0].style.display = 'block'; return arguments[0];", elem)
         elem.send_keys(solvedcaptcha)
 
-        print("Captcha successful. Sleeping for 1 second...")
+        # print("Captcha successful. Sleeping for 1 second...")
+        logging.info("Captcha successful. Sleeping for 1 second...")
         time.sleep(1)  # Workaround for captcha detecting instant submission? Unverified
         return True
 
@@ -66,8 +75,11 @@ class PtcAccMaker:
 
         # tm.delete_message(mails[0]['mail_id'])
         # print mails
-        print "------------------------------------------------------------------"
-        print "-> Waiting to confirm email on "+email
+        # print "------------------------------------------------------------------"
+        logging.info("------------------------------------------------------------------")
+        # print "-> Waiting to confirm email on "+email
+        logging.info("-> Waiting to confirm email on "+email)
+        
         mails = tm.get_mails().body
         while ('error' in mails):
             sys.stdout.flush()
@@ -80,7 +92,10 @@ class PtcAccMaker:
         links = soup.find_all('a')
 
         activationLink = links[2]['href']
-        print activationLink
+        # print activationLink
+        logging.info(activationLink)
+        
+        
         sys.stdout.flush()
 
         r = requests.get(activationLink)
@@ -88,14 +103,23 @@ class PtcAccMaker:
         confHtml = r.text.encode('utf8')
         soup = BS(confHtml, "lxml")
         confText = soup.find("h2", class_="cufonAlternate")
-        print email+": "+confText.string
+        # print email+": "+confText.string
+        logging.info(email+": "+confText.string)
+        
         sys.stdout.flush()
 
         f = open('accounts.csv', 'ab')
         f.write('ptc,'+name+','+password+'\n')
         f.close()
+        # print "==============================================================================================="
+        logging.info("===============================================================================================")
+        
+        sys.stdout.flush()
     
-    def run(self):        
+    def run(self):
+        display = Display(visible=0, size=(800, 600))
+        display.start()
+
         am = PtcAccMaker()
 
         tmList = []
@@ -112,6 +136,31 @@ class PtcAccMaker:
         pool.close() 
         pool.join()
 
-if __name__ == "__main__": 
-    am = PtcAccMaker()
-    am.run()
+if __name__ == "__main__":
+    
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',filename='logs_file',filemode='w')
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    console.setFormatter(formatter)
+    logging.getLogger('').addHandler(console)
+
+    for i in range(0,100):
+        while True:
+            try:
+                # print "Creating account started"
+                logging.info("Creating account started")
+                am = PtcAccMaker()
+                am.run()
+
+                # print "Creating account finished, another after 5 minutes"
+                logging.info("Creating account finished, another after 5 minutes")
+
+                time.sleep(300)
+            except:
+                # print "Error happened, retrying after 1 minute"
+                logging.info("Error happened, retrying after 1 minute")
+                time.sleep(60)
+                
+                continue
+            break

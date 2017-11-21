@@ -1,3 +1,5 @@
 *.pyc
 accounts.csv
 .env
+.code
+.vscode

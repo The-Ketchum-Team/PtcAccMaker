@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import os
-import sys
+import sys, traceback
 import time
 from hashlib import md5
 from multiprocessing.dummy import Pool as ThreadPool
@@ -49,7 +49,6 @@ class PtcAccMaker:
         solvedcaptcha = cs.solve(reCode,pgurl)
         recaptcha_resp = driver.find_element_by_id("g-recaptcha-response")
 
-        captchalen = len(solvedcaptcha)
         elem = driver.find_element_by_name("g-recaptcha-response")
         elem = driver.execute_script("arguments[0].style.display = 'block'; return arguments[0];", elem)
         elem.send_keys(solvedcaptcha)
@@ -125,16 +124,19 @@ class PtcAccMaker:
         tmList = []
         # tmList.append(TempMail())
 
-        for item in range(0,1):
-            tmList.append(TempMail(key=self.TEMP_MAIL_KEY))
+        tm = TempMail(key=self.TEMP_MAIL_KEY)
 
-        # tm = TempMail('testmail')
+        results = self.cadastration(tm)
+        # for item in range(0,1):
+        #     tmList.append(TempMail(key=self.TEMP_MAIL_KEY))
 
-        pool = ThreadPool(5) 
-        results = pool.map(self.cadastration, tmList)
+        # # tm = TempMail('testmail')
 
-        pool.close() 
-        pool.join()
+        # pool = ThreadPool(5) 
+        # results = pool.map(self.cadastration, tmList)
+
+        # pool.close() 
+        # pool.join()
 
 if __name__ == "__main__":
     
@@ -160,6 +162,7 @@ if __name__ == "__main__":
             except:
                 # print "Error happened, retrying after 1 minute"
                 logging.info("Error happened, retrying after 1 minute")
+                traceback.print_exc(file=sys.stdout)
                 time.sleep(60)
                 
                 continue

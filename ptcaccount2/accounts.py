@@ -216,6 +216,7 @@ def create_account(username, password, email, birthday, captcha_handler):
 
 def _validate_response(driver):
     url = driver.current_url
+    print url
     if url in SUCCESS_URLS:
         return True
     elif url == DUPE_EMAIL_URL:

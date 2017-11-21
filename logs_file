@@ -1,1 +1,17 @@
-2017-09-25 11:23:46,912 - INFO - Creating account started
+2017-11-20 22:28:03,404 - INFO - Creating account started
+2017-11-20 22:28:24,115 - INFO - Captcha successful. Sleeping for 1 second...
+2017-11-20 22:28:30,308 - INFO - ------------------------------------------------------------------
+2017-11-20 22:28:30,308 - INFO - -> Waiting to confirm email on chdhrt@oxforgo.com
+2017-11-20 22:28:42,720 - INFO - Error happened, retrying after 1 minute
+2017-11-20 22:29:42,723 - INFO - Creating account started
+2017-11-20 22:30:03,557 - INFO - Captcha successful. Sleeping for 1 second...
+2017-11-20 22:30:13,223 - INFO - Error happened, retrying after 1 minute
+2017-11-20 22:31:13,271 - INFO - Creating account started
+2017-11-20 22:32:05,135 - INFO - Captcha successful. Sleeping for 1 second...
+2017-11-20 22:32:09,755 - INFO - ------------------------------------------------------------------
+2017-11-20 22:32:09,755 - INFO - -> Waiting to confirm email on hih8fj@oxforgo.com
+2017-11-20 22:34:19,747 - INFO - https://club.pokemon.com/us/pokemon-trainer-club/activated/fbd4c0d4599d1beafac7d79cc995e2cc
+2017-11-20 22:34:22,238 - INFO - hih8fj@oxforgo.com: Thank you for signing up! Your account is now active.
+2017-11-20 22:34:22,239 - INFO - ===============================================================================================
+2017-11-20 22:34:22,239 - INFO - Creating account finished, another after 5 minutes
+2017-11-20 22:36:19,825 - INFO - Error happened, retrying after 1 minute
